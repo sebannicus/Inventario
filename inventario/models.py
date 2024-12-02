@@ -1,33 +1,17 @@
-from django.db import models
+from django.db import models, transaction
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-
 
 class Producto(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     descripcion = models.TextField(blank=True)
-    cantidad = models.PositiveIntegerField(default=0)
+    cantidad = models.PositiveIntegerField(default=0)  # Cantidad actual en inventario
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     imagen = models.ImageField(upload_to='productos/', blank=True, null=True)
-    is_active = models.BooleanField(default=True)  # Eliminación lógica
-
-    class Meta:
-        permissions = [
-            ("can_change_price", "Puede cambiar el precio del producto"),
-        ]
-
-    def soft_delete(self):
-        """Marca el producto como inactivo."""
-        self.is_active = False
-        self.save()
-
-    def restore(self):
-        """Restaura un producto eliminado."""
-        self.is_active = True
-        self.save()
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.nombre} - {'Activo' if self.is_active else 'Eliminado'}"
-
 
 class MovimientoInventario(models.Model):
     TIPO_CHOICES = [
@@ -49,7 +33,29 @@ class MovimientoInventario(models.Model):
         null=True,
         blank=True,
         related_name='movimientos'
-    )  # Usuario responsable del movimiento
+    )
+
+    def clean(self):
+        """Validaciones previas al guardar."""
+        if self.cantidad <= 0:
+            raise ValidationError("La cantidad debe ser mayor a 0.")
+
+        if self.tipo == 'SALIDA' and self.producto.cantidad < self.cantidad:
+            raise ValidationError(
+                f"Stock insuficiente: solo hay {self.producto.cantidad} unidades disponibles de {self.producto.nombre}."
+            )
+
+    def save(self, *args, **kwargs):
+        """Actualiza el stock del producto al registrar un movimiento."""
+        if not self.pk:  # Solo ejecuta la lógica al crear un nuevo movimiento
+            if self.tipo == 'ENTRADA':
+                self.producto.cantidad += self.cantidad
+            elif self.tipo == 'SALIDA':
+                self.producto.cantidad -= self.cantidad
+            self.producto.save()
+        super().save(*args, **kwargs)
+
+
 
     def __str__(self):
         return f"{self.tipo} - {self.cantidad} {self.producto.nombre} ({self.fecha:%d/%m/%Y %H:%M})"

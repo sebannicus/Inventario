@@ -92,12 +92,21 @@ def detalle_producto(request, producto_id):
 
 
 @permission_required('inventario.add_producto', raise_exception=True)
+@login_required
 def crear_producto(request):
-    """Crea un nuevo producto."""
+    """Crea un nuevo producto con validaciones adicionales."""
     if request.method == 'POST':
         form = ProductoForm(request.POST, request.FILES)
         if form.is_valid():
-            producto = form.save()
+            producto = form.save(commit=False)
+
+            # Validaciones
+            if producto.cantidad < 0:
+                return JsonResponse({'error': 'La cantidad inicial no puede ser negativa.'}, status=400)
+            if producto.precio <= 0:
+                return JsonResponse({'error': 'El precio debe ser mayor a cero.'}, status=400)
+
+            producto.save()
             if 'application/json' in request.headers.get('Accept', ''):
                 return JsonResponse({'success': True, 'producto_id': producto.id}, status=201)
             return redirect(reverse('lista_productos'))
@@ -112,12 +121,20 @@ def crear_producto(request):
 
 @permission_required('inventario.change_producto', raise_exception=True)
 def editar_producto(request, producto_id):
-    """Edita un producto existente."""
+    """Edita un producto existente con validaciones adicionales."""
     producto = get_object_or_404(Producto, id=producto_id)
     if request.method == 'POST':
         form = ProductoForm(request.POST, request.FILES, instance=producto)
         if form.is_valid():
-            form.save()
+            producto = form.save(commit=False)
+
+            # Validaciones
+            if producto.cantidad < 0:
+                return JsonResponse({'error': 'La cantidad no puede ser negativa.'}, status=400)
+            if producto.precio <= 0:
+                return JsonResponse({'error': 'El precio debe ser mayor a cero.'}, status=400)
+
+            producto.save()
             if 'application/json' in request.headers.get('Accept', ''):
                 return JsonResponse({'success': True}, status=200)
             return redirect(reverse('lista_productos'))
@@ -129,7 +146,6 @@ def editar_producto(request, producto_id):
         'producto': producto,
         'volver_url': reverse('detalle_producto', args=[producto_id]),
     })
-
 
 @permission_required('inventario.delete_producto', raise_exception=True)
 def eliminar_producto(request, producto_id):
@@ -160,29 +176,58 @@ def restaurar_producto(request, producto_id):
 
 
 # Movimientos de Inventario
+# Movimientos de Inventario
 @login_required
 def registrar_movimiento(request, producto_id, tipo):
     """Registra un movimiento de inventario."""
     producto = get_object_or_404(Producto, id=producto_id)
+
     if request.method == 'POST':
         form = MovimientoForm(request.POST)
         if form.is_valid():
             movimiento = form.save(commit=False)
             movimiento.producto = producto
-            movimiento.tipo = tipo
+            movimiento.tipo = tipo.upper()  # Aseguramos que el tipo esté en mayúsculas
             movimiento.responsable = request.user
-            if tipo == 'SALIDA' and producto.cantidad < movimiento.cantidad:
-                return JsonResponse({'error': 'No hay suficiente stock'}, status=400)
-            producto.cantidad += movimiento.cantidad if tipo == 'ENTRADA' else -movimiento.cantidad
-            producto.save()
-            movimiento.save()
-            return JsonResponse({'success': True}, status=201)
 
-    elif 'application/json' in request.headers.get('Accept', ''):
-        return JsonResponse({'error': 'Método no permitido'}, status=405)
+            # Validación del tipo de movimiento
+            if movimiento.tipo not in ['ENTRADA', 'SALIDA']:
+                return render(request, 'inventario/registrar_movimiento.html', {
+                    'form': form,
+                    'producto': producto,
+                    'tipo': tipo,
+                    'error': 'Tipo de movimiento inválido.',
+                })
+
+            # Validaciones específicas para salidas
+            if movimiento.tipo == 'SALIDA':
+                if producto.cantidad == 0:
+                    return render(request, 'inventario/registrar_movimiento.html', {
+                        'form': form,
+                        'producto': producto,
+                        'tipo': tipo,
+                        'error': 'No hay suficiente stock para realizar una salida.',
+                    })
+                if producto.cantidad < movimiento.cantidad:
+                    return render(request, 'inventario/registrar_movimiento.html', {
+                        'form': form,
+                        'producto': producto,
+                        'tipo': tipo,
+                        'error': 'La cantidad solicitada excede el stock disponible.',
+                    })
+
+            # Guardar el movimiento (el modelo manejará la actualización del producto)
+            movimiento.save()
+
+            # Redirigir a la lista de productos después del movimiento
+            return redirect('lista_productos')
 
     form = MovimientoForm()
-    return render(request, 'inventario/registrar_movimiento.html', {'form': form, 'producto': producto, 'tipo': tipo})
+    return render(request, 'inventario/registrar_movimiento.html', {
+        'form': form,
+        'producto': producto,
+        'tipo': tipo,
+    })
 
 
 # Exportar Reportes
