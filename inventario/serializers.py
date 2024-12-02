@@ -34,14 +34,14 @@ class ProductoSerializer(serializers.ModelSerializer):
             'imagen'       # URL o path de la imagen
         ]
 
-
 class MovimientoInventarioSerializer(serializers.ModelSerializer):
     """
     Serializador para el modelo MovimientoInventario.
-    Incluye información sobre el producto y el usuario responsable.
+    Incluye información sobre el producto, el usuario responsable, y el stock actual.
     """
     producto = serializers.StringRelatedField()  # Muestra el nombre del producto
     responsable = serializers.StringRelatedField()  # Muestra el nombre del usuario responsable
+    stock_actual = serializers.SerializerMethodField()  # Campo adicional para mostrar el stock actual
 
     def validate(self, data):
         """
@@ -61,13 +61,20 @@ class MovimientoInventarioSerializer(serializers.ModelSerializer):
 
         return data
 
+    def get_stock_actual(self, obj):
+        """
+        Obtiene el stock actual del producto relacionado después del movimiento.
+        """
+        return obj.producto.cantidad
+
     class Meta:
         model = MovimientoInventario
         fields = [
-            'id',          # Identificador único del movimiento
-            'producto',    # Producto relacionado al movimiento
-            'tipo',        # Tipo de movimiento (ENTRADA/SALIDA)
-            'cantidad',    # Cantidad del movimiento
-            'fecha',       # Fecha y hora del movimiento
-            'responsable'  # Usuario responsable del movimiento
+            'id',           # Identificador único del movimiento
+            'producto',     # Producto relacionado al movimiento
+            'tipo',         # Tipo de movimiento (ENTRADA/SALIDA)
+            'cantidad',     # Cantidad del movimiento
+            'stock_actual', # Stock actual después del movimiento
+            'fecha',        # Fecha y hora del movimiento
+            'responsable'   # Usuario responsable del movimiento
         ]

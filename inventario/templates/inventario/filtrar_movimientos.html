@@ -51,6 +51,7 @@
                 <th>Producto</th>
                 <th>Tipo</th>
                 <th>Cantidad</th>
+                <th>Stock Actual</th> <!-- Nueva columna para el stock actual -->
                 <th>Fecha</th>
                 <th>Responsable</th>
             </tr>
@@ -62,12 +63,13 @@
                 <td>{{ movimiento.producto.nombre }}</td>
                 <td>{{ movimiento.tipo }}</td>
                 <td>{{ movimiento.cantidad }}</td>
+                <td>{{ movimiento.producto.cantidad }}</td> <!-- Mostrar el stock actual -->
                 <td>{{ movimiento.fecha|date:"d/m/Y H:i" }}</td>
                 <td>{{ movimiento.responsable.username|default:"N/A" }}</td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6" class="text-center">No se encontraron movimientos.</td>
+                <td colspan="7" class="text-center">No se encontraron movimientos.</td>
             </tr>
             {% endfor %}
         </tbody>

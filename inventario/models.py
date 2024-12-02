@@ -33,29 +33,21 @@ class MovimientoInventario(models.Model):
         null=True,
         blank=True,
         related_name='movimientos'
-    )
-
-    def clean(self):
-        """Validaciones previas al guardar."""
-        if self.cantidad <= 0:
-            raise ValidationError("La cantidad debe ser mayor a 0.")
-
-        if self.tipo == 'SALIDA' and self.producto.cantidad < self.cantidad:
-            raise ValidationError(
-                f"Stock insuficiente: solo hay {self.producto.cantidad} unidades disponibles de {self.producto.nombre}."
-            )
+    )  # Usuario responsable del movimiento
+    stock_despues = models.PositiveIntegerField(default=0)  # Stock después del movimiento
 
     def save(self, *args, **kwargs):
-        """Actualiza el stock del producto al registrar un movimiento."""
-        if not self.pk:  # Solo ejecuta la lógica al crear un nuevo movimiento
-            if self.tipo == 'ENTRADA':
-                self.producto.cantidad += self.cantidad
-            elif self.tipo == 'SALIDA':
-                self.producto.cantidad -= self.cantidad
-            self.producto.save()
+        """Sobrescribe el método save para actualizar el stock del producto y guardar el stock después del movimiento."""
+        if self.tipo == 'ENTRADA':
+            self.producto.cantidad += self.cantidad
+        elif self.tipo == 'SALIDA':
+            self.producto.cantidad -= self.cantidad
+
+        self.producto.save()
+
+        # Almacena el stock actual después del movimiento
+        self.stock_despues = self.producto.cantidad
         super().save(*args, **kwargs)
-
-
 
     def __str__(self):
         return f"{self.tipo} - {self.cantidad} {self.producto.nombre} ({self.fecha:%d/%m/%Y %H:%M})"

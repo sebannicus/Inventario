@@ -176,7 +176,6 @@ def restaurar_producto(request, producto_id):
 
 
 # Movimientos de Inventario
-# Movimientos de Inventario
 @login_required
 def registrar_movimiento(request, producto_id, tipo):
     """Registra un movimiento de inventario."""
@@ -219,14 +218,18 @@ def registrar_movimiento(request, producto_id, tipo):
             # Guardar el movimiento (el modelo manejará la actualización del producto)
             movimiento.save()
 
+            # Obtener el stock actual después del movimiento
+            stock_actual = producto.cantidad
+
             # Redirigir a la lista de productos después del movimiento
-            return redirect('lista_productos')
+            return redirect(reverse('lista_productos'))
 
     form = MovimientoForm()
     return render(request, 'inventario/registrar_movimiento.html', {
         'form': form,
         'producto': producto,
         'tipo': tipo,
+        'stock_actual': producto.cantidad,  # Stock actual del producto
     })
 
 
