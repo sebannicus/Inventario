@@ -1,0 +1,52 @@
+{% extends 'inventario/base.html' %}
+{% load static %}
+
+{% block title %}Detalle del Producto{% endblock %}
+
+{% block content %}
+<div class="container mt-4 d-flex justify-content-center">
+    <div class="card shadow" style="width: 75%;">
+        <div class="card-header bg-dark text-white text-center">
+            <h2 class="card-title m-0">{{ producto.nombre }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="text-center">
+                <!-- Imagen del producto -->
+                <div class="mb-4">
+                    {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="img-fluid rounded fixed-size">
+                    {% else %}
+                    <img src="{% static 'images/default-product.png' %}" alt="Producto no disponible" class="img-fluid rounded fixed-size">
+                    {% endif %}
+                </div>
+
+                <!-- Detalles del producto -->
+                <div>
+                    <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+                    <p><strong>Cantidad:</strong> {{ producto.cantidad }}</p>
+                    <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+                    <p>
+                        <strong>Estado:</strong>
+                        {% if producto.is_active %}
+                        <span class="badge bg-success">Activo</span>
+                        {% else %}
+                        <span class="badge bg-danger">Inactivo</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-start gap-2">
+            <a href="{% url 'editar_producto' producto.id %}" class="btn btn-primary">Editar</a>
+            {% if producto.is_active %}
+            <a href="{% url 'registrar_entrada' producto.id %}" class="btn btn-primary">Registrar Entrada</a>
+            <a href="{% url 'registrar_salida' producto.id %}" class="btn btn-primary">Registrar Salida</a>
+            <a href="{% url 'eliminar_producto' producto.id %}" class="btn btn-primary">Eliminar</a>
+            {% else %}
+            <a href="{% url 'restaurar_producto' producto.id %}" class="btn btn-primary">Restaurar</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

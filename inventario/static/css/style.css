@@ -1,0 +1,316 @@
+/* General */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #e9ecef;
+    margin: 0;
+    padding: 0;
+}
+
+/* Ventana principal */
+.window {
+    width: 90%;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: #f8f9fa;
+    border: 2px solid #6c757d;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Barra de título */
+.title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #343a40;
+    color: #fff;
+    padding: 10px 15px;
+    border-bottom: 2px solid #6c757d;
+}
+
+.title-bar-text {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Cuerpo de la ventana */
+.window-body {
+    padding: 20px;
+}
+
+/* Menú */
+.menu-bar {
+    background-color: #495057;
+    padding: 10px;
+    border-radius: 0 0 10px 10px;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.menu li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    padding: 8px 15px;
+    background-color: #343a40;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.menu li a:hover {
+    background-color: #adb5bd;
+    color: #212529;
+}
+
+/* Usuario y hora */
+.user-section {
+    background-color: #f5f5f5;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.user-info-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-detail, .time-detail {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+/* Botones */
+button, .btn {
+    font-family: inherit;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover, .btn:hover {
+    background-color: #0056b3;
+}
+
+.btn-primary {
+    background-color: #363232;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px 20px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-cancel {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid #6c757d;
+    border-radius: 5px;
+    margin-right: 10px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background-color: #e2e6ea;
+    color: #343a40;
+    border-color: #343a40;
+}
+
+/* Tablas */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+.table thead tr {
+    background-color: #343a40;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.table .btn {
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 5px;
+}
+
+.table .btn-info {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+.table .btn-info:hover {
+    background-color: #138496;
+}
+
+.table .btn-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.table .btn-warning:hover {
+    background-color: #e0a800;
+}
+
+.table .btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.table .btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Formularios */
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    width: 100px;
+    text-align: right;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.form-group input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Contenedor para botones de filtros y agregar producto */
+.button-container {
+    display: flex;
+    justify-content: space-between; /* Separa los botones a extremos */
+    align-items: center; /* Centra verticalmente */
+    margin-bottom: 20px; /* Espaciado inferior */
+    flex-wrap: wrap; /* Permite que los botones se adapten en pantallas pequeñas */
+}
+
+/* Botones de filtro */
+.filter-buttons {
+    display: flex;
+    gap: 10px; /* Espaciado entre los botones */
+    justify-content: flex-end;
+}
+
+/* Botón para agregar producto */
+.add-product-button {
+    flex-grow: 1; /* Ocupa espacio para mantenerse a la izquierda */
+    text-align: left;
+}
+
+/* Card styling */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    padding: 15px;
+}
+
+/* Imagen del producto */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+/* Botón volver */
+.btn-secondary {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.fixed-size {
+    width: 300px; /* Tamaño uniforme */
+    height: 300px;
+    object-fit: cover; /* Ajusta la imagen sin distorsión */
+    background-color: #f8f9fa; /* Fondo para imágenes transparentes */
+}
+
+.volver-section {
+    margin-top: 20px;
+}
+
+.volver-section .btn-primary {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+}

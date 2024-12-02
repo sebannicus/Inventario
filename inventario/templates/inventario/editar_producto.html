@@ -1,0 +1,13 @@
+{% extends 'inventario/base.html' %}
+
+{% block title %}{{ producto|default:"Nuevo Producto" }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ producto|default:"Nuevo Producto" }}</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="{% url 'lista_productos' %}" class="btn btn-primary">Cancelar</a>
+</form>
+{% endblock %}

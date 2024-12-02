@@ -1,0 +1,76 @@
+{% extends 'inventario/base.html' %}
+{% load query_transform %}
+
+{% block title %}Filtrar Movimientos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4 text-center">Filtrar Movimientos de Inventario</h1>
+
+    <!-- Formulario de Filtros -->
+    <form method="get" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label for="id_producto" class="form-label">{{ form.producto.label }}</label>
+                {{ form.producto }}
+            </div>
+            <div class="col-md-3">
+                <label for="id_tipo" class="form-label">{{ form.tipo.label }}</label>
+                {{ form.tipo }}
+            </div>
+            <div class="col-md-3">
+                <label for="id_fecha_inicio" class="form-label">{{ form.fecha_inicio.label }}</label>
+                {{ form.fecha_inicio }}
+            </div>
+            <div class="col-md-3">
+                <label for="id_fecha_fin" class="form-label">{{ form.fecha_fin.label }}</label>
+                {{ form.fecha_fin }}
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="id_responsable" class="form-label">{{ form.responsable.label }}</label>
+                {{ form.responsable }}
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+            <a href="{% url 'filtrar_movimientos' %}" class="btn btn-primary">Limpiar Filtros</a>
+        </div>
+    </form>
+
+    <!-- Opciones de Exportación -->
+    <div class="d-flex justify-content-end mb-4">
+        <a href="?{% query_transform request exportar_movimientos_csv=True %}" class="btn btn-primary me-2">Exportar a CSV</a>
+        <a href="?{% query_transform request exportar_movimientos_pdf=True %}" class="btn btn-primary">Exportar a PDF</a>
+    </div>
+
+    <!-- Tabla de Resultados -->
+    <table class="table table-hover table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th>Cantidad</th>
+                <th>Fecha</th>
+                <th>Responsable</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movimiento in movimientos %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ movimiento.producto.nombre }}</td>
+                <td>{{ movimiento.tipo }}</td>
+                <td>{{ movimiento.cantidad }}</td>
+                <td>{{ movimiento.fecha|date:"d/m/Y H:i" }}</td>
+                <td>{{ movimiento.responsable.username|default:"N/A" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No se encontraron movimientos.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

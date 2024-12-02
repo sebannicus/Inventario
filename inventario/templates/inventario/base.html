@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Inventario{% endblock %}</title>
+
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">FreshLogic - Gestión de Inventario</div>
+            <div class="title-bar-controls">
+                <!-- Controles adicionales -->
+            </div>
+        </div>
+        <div class="window-body">
+            <header class="menu-bar">
+                <nav>
+                    <ul class="menu">
+                        <li><a href="{% url 'lista_productos' %}">Inicio</a></li>
+                        <li><a href="{% url 'filtrar_movimientos' %}">Movimientos</a></li>
+                        <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    </ul>
+                </nav>
+            </header>
+            
+            <!-- Información del usuario -->
+            <section class="user-section">
+                <div class="user-info-container">
+                    {% if user.is_authenticated %}
+                        <div>
+                            <span class="user-detail">Usuario: <strong>{{ user.username }}</strong></span>
+                        </div>
+                        <div>
+                            <span class="time-detail">Hora actual: <strong>{{ now|date:"H:i:s" }}</strong></span>
+                        </div>
+                    {% else %}
+                        <span class="user-detail">No autenticado</span>
+                    {% endif %}
+                </div>
+            </section>
+
+            <main>
+                {% block content %}
+                <!-- Contenido de la página -->
+                {% endblock %}
+            </main>
+
+            <!-- Botón Volver -->
+            {% if volver_url %}
+            <section class="volver-section text-center mt-4">
+                <a href="{{ volver_url }}" class="btn btn-primary">Volver</a>
+            </section>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        <p>© FreshLogic 2024 - Gestión de Inventario</p>
+    </footer>
+</body>
+</html>
