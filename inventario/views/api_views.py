@@ -4,11 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import generics
-from inventario.serializers import ProductoSerializer
+from inventario.serializers import ProductoSerializer, MovimientoInventarioSerializer
 from rest_framework.permissions import IsAuthenticated
-from inventario.serializers import MovimientoInventarioSerializer
-
-
 
 # Lista y creación de productos
 class ProductoListCreateView(generics.ListCreateAPIView):
@@ -21,6 +18,12 @@ class ProductoDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
     permission_classes = [IsAuthenticated]
+
+    def perform_destroy(self, instance):
+        """
+        Realiza un soft delete en lugar de eliminar físicamente el producto.
+        """
+        instance.soft_delete()
 
 # Lista de movimientos
 class MovimientoListView(generics.ListAPIView):

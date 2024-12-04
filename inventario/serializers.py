@@ -22,6 +22,14 @@ class ProductoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("El precio debe ser mayor a cero.")
         return value
 
+    def validate_is_active(self, value):
+        """
+        Valida que el campo is_active sea un valor booleano.
+        """
+        if not isinstance(value, bool):
+            raise serializers.ValidationError("El estado (is_active) debe ser un valor booleano.")
+        return value
+
     class Meta:
         model = Producto
         fields = [
@@ -50,6 +58,9 @@ class MovimientoInventarioSerializer(serializers.ModelSerializer):
         producto = self.instance.producto if self.instance else data.get('producto')
         tipo = data.get('tipo')
         cantidad = data.get('cantidad')
+
+        if not producto.is_active:
+            raise serializers.ValidationError("No se pueden realizar movimientos en productos inactivos.")
 
         if tipo == 'SALIDA':
             if producto.cantidad == 0:
