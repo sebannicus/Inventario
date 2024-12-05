@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'inventario',
     'rest_framework',
     'corsheaders',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -161,9 +162,17 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Si usas un emulador
     "http://127.0.0.1:3000",  # Otra posible ruta para el emulador
 ]
+
+APPEND_SLASH = True

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from inventario.models import Producto, MovimientoInventario
+from rest_framework.authentication import TokenAuthentication
 
 class ProductoSerializer(serializers.ModelSerializer):
     """
@@ -45,47 +46,42 @@ class ProductoSerializer(serializers.ModelSerializer):
 class MovimientoInventarioSerializer(serializers.ModelSerializer):
     """
     Serializador para el modelo MovimientoInventario.
-    Incluye información sobre el producto, el usuario responsable, y el stock actual.
+    Incluye información sobre el producto y el usuario responsable.
     """
-    producto = serializers.StringRelatedField()  # Muestra el nombre del producto
-    responsable = serializers.StringRelatedField()  # Muestra el nombre del usuario responsable
-    stock_actual = serializers.SerializerMethodField()  # Campo adicional para mostrar el stock actual
+    producto = serializers.PrimaryKeyRelatedField(queryset=Producto.objects.all())  # Asegurar que el producto se envíe correctamente
+    responsable = serializers.HiddenField(default=serializers.CurrentUserDefault())  # Registrar automáticamente al usuario autenticado
 
     def validate(self, data):
         """
         Valida las reglas de negocio específicas para movimientos de inventario.
         """
-        producto = self.instance.producto if self.instance else data.get('producto')
+        producto = data.get('producto')  # Obtener el producto desde los datos validados
         tipo = data.get('tipo')
         cantidad = data.get('cantidad')
 
-        if not producto.is_active:
-            raise serializers.ValidationError("No se pueden realizar movimientos en productos inactivos.")
+        if not producto:
+            raise serializers.ValidationError("El producto es obligatorio para registrar un movimiento.")
 
         if tipo == 'SALIDA':
+            if not producto.is_active:
+                raise serializers.ValidationError("No se puede registrar movimientos para un producto inactivo.")
             if producto.cantidad == 0:
                 raise serializers.ValidationError("El producto no tiene stock disponible.")
             if producto.cantidad < cantidad:
                 raise serializers.ValidationError("No hay suficiente stock para realizar la salida.")
-        elif tipo == 'ENTRADA' and cantidad <= 0:
+
+        if tipo == 'ENTRADA' and cantidad <= 0:
             raise serializers.ValidationError("La cantidad de entrada debe ser mayor a cero.")
 
         return data
 
-    def get_stock_actual(self, obj):
-        """
-        Obtiene el stock actual del producto relacionado después del movimiento.
-        """
-        return obj.producto.cantidad
-
     class Meta:
         model = MovimientoInventario
         fields = [
-            'id',           # Identificador único del movimiento
-            'producto',     # Producto relacionado al movimiento
-            'tipo',         # Tipo de movimiento (ENTRADA/SALIDA)
-            'cantidad',     # Cantidad del movimiento
-            'stock_actual', # Stock actual después del movimiento
-            'fecha',        # Fecha y hora del movimiento
-            'responsable'   # Usuario responsable del movimiento
+            'id',          # Identificador único del movimiento
+            'producto',    # Producto relacionado al movimiento
+            'tipo',        # Tipo de movimiento (ENTRADA/SALIDA)
+            'cantidad',    # Cantidad del movimiento
+            'fecha',       # Fecha y hora del movimiento
+            'responsable'  # Usuario responsable del movimiento
         ]
