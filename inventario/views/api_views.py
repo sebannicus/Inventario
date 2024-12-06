@@ -4,35 +4,55 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import generics
+<<<<<<< HEAD
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from inventario.serializers import ProductoSerializer, MovimientoInventarioSerializer
+=======
+from inventario.serializers import ProductoSerializer, MovimientoInventarioSerializer
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+>>>>>>> cc824ecf81756850e74cc915d147aa908a4a8ab3
 
 # Lista y creación de productos
 class ProductoListCreateView(generics.ListCreateAPIView):
     queryset = Producto.objects.filter(is_active=True)
     serializer_class = ProductoSerializer
+    authentication_classes = [BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
 # Detalles y edición de productos
 class ProductoDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
+    authentication_classes = [BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-# Lista de movimientos
-class MovimientoListView(generics.ListAPIView):
-    queryset = MovimientoInventario.objects.all()
-    serializer_class = MovimientoInventarioSerializer
-    permission_classes = [IsAuthenticated]
+    def perform_destroy(self, instance):
+        """
+        Realiza un soft delete en lugar de eliminar físicamente el producto.
+        """
+        instance.soft_delete()
 
-# Registrar un movimiento
+# Crear un movimiento de inventario
 class MovimientoCreateView(generics.CreateAPIView):
     queryset = MovimientoInventario.objects.all()
     serializer_class = MovimientoInventarioSerializer
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        """Registra el movimiento e incluye al usuario autenticado como responsable."""
+        serializer.save(responsable=self.request.user)
+
+# Listar movimientos de inventario
+class MovimientoListView(generics.ListAPIView):
+    queryset = MovimientoInventario.objects.all()
+    serializer_class = MovimientoInventarioSerializer
+    authentication_classes = [BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
 # Endpoint para manejar inicio de sesión

@@ -10,6 +10,16 @@ class Producto(models.Model):
     imagen = models.ImageField(upload_to='productos/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
+    def soft_delete(self):
+        """Marca el producto como inactivo sin eliminarlo físicamente."""
+        self.is_active = False
+        self.save()
+
+    def restore(self):
+        """Restaura un producto marcado como inactivo."""
+        self.is_active = True
+        self.save()
+
     def __str__(self):
         return f"{self.nombre} - {'Activo' if self.is_active else 'Eliminado'}"
 

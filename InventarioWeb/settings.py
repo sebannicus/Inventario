@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-#cx8=*db4!ae8^yzy60)ej_h9=+)70_)#e1((@ut3&%vta03_q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'inventario',
     'rest_framework',
     'corsheaders',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -164,6 +165,12 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
 
 CORS_ALLOWED_ORIGINS = [
@@ -171,3 +178,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",  # Otra posible ruta para el emulador
 ]
 
+<<<<<<< HEAD
+=======
+APPEND_SLASH = True
+>>>>>>> cc824ecf81756850e74cc915d147aa908a4a8ab3
