@@ -19,6 +19,7 @@ from inventario.views.api_views import (
     ProductoDetailView,
     MovimientoListView,
     MovimientoCreateView,
+    api_login,  # Importar el nuevo endpoint de login
 )
 
 # Definición centralizada de URLs
@@ -50,4 +51,5 @@ urlpatterns = [
     path('api/productos/<int:pk>/', ProductoDetailView.as_view(), name='api_producto_detalle'),
     path('api/movimientos/', MovimientoListView.as_view(), name='api_movimientos'),
     path('api/movimientos/crear/', MovimientoCreateView.as_view(), name='api_movimientos_crear'),
+    path('api/login/', api_login, name='api_login'),  # Nuevo endpoint de login
 ]

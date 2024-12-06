@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -99,6 +100,8 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+ALLOWED_HOSTS = ['*']
+
 
 
 # Password validation
@@ -167,3 +170,4 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Si usas un emulador
     "http://127.0.0.1:3000",  # Otra posible ruta para el emulador
 ]
+
