@@ -4,18 +4,16 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import generics
-<<<<<<< HEAD
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from inventario.serializers import ProductoSerializer, MovimientoInventarioSerializer
-=======
 from inventario.serializers import ProductoSerializer, MovimientoInventarioSerializer
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
->>>>>>> cc824ecf81756850e74cc915d147aa908a4a8ab3
+
 
 # Lista y creación de productos
 class ProductoListCreateView(generics.ListCreateAPIView):

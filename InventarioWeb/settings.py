@@ -177,8 +177,3 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Si usas un emulador
     "http://127.0.0.1:3000",  # Otra posible ruta para el emulador
 ]
-
-<<<<<<< HEAD
-=======
-APPEND_SLASH = True
->>>>>>> cc824ecf81756850e74cc915d147aa908a4a8ab3
